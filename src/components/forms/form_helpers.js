@@ -6,21 +6,24 @@ const printifyName = (name) => {
 const checkBasicText = (pair) => {
     return valueIsType(pair, 'string') &&     
     fieldDoesNotContain(pair, ['_id',  '_text', '_url', 'foreign_class'] ) &&
-    fieldIsNot(pair, ['id'])
+    fieldIsNot(pair, ['id', 'visit_status', 'school_year', 'notes', 'message_type', 'phone'])
 }
 
 const checkTextField = (pair) => {
-    return fieldContains(pair, '_text')
+    return pair[0] === 'notes' || fieldContains(pair, '_text')
 }
 
 const checkIdSelectField = (pair) => {
     return fieldContains(pair, '_id') && 
-    fieldDoesNotContain(pair, ['foreign'])
+    fieldDoesNotContain(pair, ['foreign']) &&
+    fieldIsNot(pair, ['recruiting_personnel_id', 
+    'visit_team_id', 'visit_athlete_id', 'visit_personnel_id', 'team_id',
+    'message_team_id', 'message_athlete_id', 'message_personnel_id',])
 }
 
 const checkArrayOptionsField = (pair) => {
     return valueIsType(pair, 'array') && 
-    fieldDoesNotContain(pair, ['_id'])
+    fieldDoesNotContain(pair, ['_id', 'time_options'])
 }
 
 const checkBasicNumber = (pair) => {

@@ -1,54 +1,30 @@
 import React from 'react';
-import {siteTitle, logoURL} from '../helpers/site'
-import {Row, Col} from 'reactstrap'
+import {logoURL} from '../helpers/site'
 import {Link} from 'react-router-dom'
 
 function Home(props) {
-
 	const squares = [
 		{
-			title: "Manage Your Recruits",
-			description: "",
-			symbol: "users",
-			linkDescription: "See Features",
-			link: ""
+			title: "Sign Up",
+			link: "/users/register"
 		},
 		{
-			title: "Sign Up For The Release",
-			description: "The full product is still under development, but you can be the first to know about it's release.",
-			symbol: "certificate",
-			linkDescription: "Sign Up",
-			link: ""
-		},
-		{
-			title: "Made By People Who Care",
-			description: "Founder LeRoy Garnder started this to solve his own needs",
-			symbol: "dumbbell",
-			linkDescription: "See The Team",
-			link: ""
+			title: "Sign In",
+			link: "/users/login"
 		},
 	]
 
-	return <div style={{maxWidth:'800px',margin:'40px auto',textAlign:'center'}}>
+	return <div style={{border: "1px outset grey", textAlign: 'center', borderRadius: '2px', maxWidth:'800px',margin:'40px auto', backgroundColor: '#fff', padding: '40px'}}>
 		
-		<h2>Making recruiting smoother</h2>
-		<img alt="logo" height="100px" src={logoURL} />
-		<h1>{siteTitle}</h1>
+		<div style={{}}><img alt="logo" height="100px" style={{margin:"75px 0 25px"}} src={logoURL} /></div>
+		<h2>RecruitAI</h2>
 		<hr />
-		<Row>
-			{squares.map(({title, description, symbol, link, linkDescription}) => 
-
-				<Col lg={4} sx={12}> 
-				<div style={{padding:"20px"}}>
-					<div style={{fontSize:"48px"}} className={`fas fa-${symbol}`}></div>
-					<h3>{title}</h3>
-					<p>{description}</p>
-					<Link className="nice-button" to={link}>{linkDescription}</Link>
-					</div>	
-				</Col>
-			)}
-		</Row>
 		
+			{squares.map(({title, link}) => 
+			<span style={{ padding: '0px 20px'}}>
+					<Link className="nice-button" to={link}><h3>{title}</h3></Link>
+			</span>)}
+		<hr />
 
 	</div>
 }

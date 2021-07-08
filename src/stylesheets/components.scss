@@ -19,8 +19,8 @@ button {
 	padding: 10px;
 	line-height:1.2;
 	border: $defaultNiceButtonBorder;
-	font-size: 28px;
-	font-family: $headerFont;
+	font-size: 16px;
+	font-family: $textFont;
 	background: linear-gradient(rgba($defaultNiceButtonColor, .4), rgba($defaultNiceButtonColor, .4));
 	@media only screen and (max-width: 911px) {
 		width: 90%;
@@ -37,6 +37,8 @@ button {
 	background: linear-gradient(rgba($ll-primary-color, .4), rgba($primary-color, .4));
 	border: 8px solid $l-primary-color;
 }
+
+
 
 /* Sort/toggle buttons- have an active and inactive state. Add/remove .page-button-active to toggle. Usually, actually divs.*/
 .page-button {
@@ -70,7 +72,6 @@ a, .format-link {
 	margin: 5px;
 	border-radius: $borderRadius;
 	display: inline-block;
-	background: linear-gradient(rgba($linkBackground, .11) 3%, transparent 70%, rgba($linkBackground, .25));
 	&:hover {
 		background: rgba($linkHoverBackground, .7);
 		color: $linkHoverColor;
@@ -98,6 +99,33 @@ a, .format-link {
 			font-weight: bolder;
 		}
 	}
+}
+
+.green-button {
+	background:#25D655;
+	border-color: #25D655;
+}
+.red-button {
+	background:red;
+	border-color: white;
+	color:white !important;
+	&:hover {
+		background: white;
+		color: red !important;
+		border-color:red;
+	}
+}
+
+.white-button {
+	background:white;
+	color:black !important;
+}
+
+
+.blue-button {
+	background:#383FE2;
+	border-color: #383FE2;
+	color:white !important;
 }
 
 /* ------------------------*/

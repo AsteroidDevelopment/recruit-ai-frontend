@@ -13,7 +13,7 @@ ReactDOM.render(
       <ScrollToTop>
           <App />
           <style>
-            @import url('https://fonts.googleapis.com/css?family=Bebas+Neue|Titillium+Web|Wallpoet&display=swap');
+            @import url('https://fonts.googleapis.com/css?family=Oxygen|Helvetica|Black+Ops+One&display=swap');
           </style>
         </ScrollToTop>
     </BrowserRouter>,

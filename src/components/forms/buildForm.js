@@ -13,12 +13,9 @@ import BasicBooleanField from './fieldTypes/basicBoolean'
 import ArrayField from './fieldTypes/array'
 import IdSelectField from './fieldTypes/idSelect'
 
-import ExtraInfoField from './fieldTypes/extraInfo'
-import ExtraInfoDefaultField from './fieldTypes/defaultExtraInfo'
-
-import ConnectionRelationshipSelect from './fieldTypes/connectionRelationship'
-import DualConnectionField from './fieldTypes/duplicateConnection'
 import ImageField from './fieldTypes/imageFile'
+
+import VerifyPhone from './fieldTypes/verifyPhone'
 
 
 
@@ -66,15 +63,17 @@ class FormHandler extends React.Component {
         const results = await this.props.submitForm(this.state.bulkAdd);
         const res = results.apiCall
         const redirectPath = results.redirect
-        
+
+        console.log(res)
+
         if (res.status === 200 || res.status === 201) {
             this.formStatus('success');
-            if(redirectPath && !this.state.bulkAdd) { this.props.history.push(redirectPath) }
+            if (redirectPath && !this.state.bulkAdd) { this.props.history.push(redirectPath) }
         } else {
             this.formStatus('error');
-            if(res.response && res.response.status === 400) {
-              this.setState({error: res.response.data.message})
-            } else { this.setState({error: "Unknown error."}) }
+            if (res.response && (res.response.status === 400)) {
+                this.setState({ error: res.response.data.message })
+            } else { this.setState({ error: "Unknown error." }) }
         }
 
         setTimeout(() => { this.formStatus('complete') }, 250);
@@ -88,10 +87,10 @@ class FormHandler extends React.Component {
             onSubmit={this.submitForm}
             id={`${this.props.formClass}-${this.props.item.id}`} >
 
-            {this.state.error ?  
-            <div style={{backgroundColor: 'rgba(200,0,0,.4)', padding:'10px'}}>{this.state.error}</div>
-            : ""}
-            
+            {this.state.error ?
+                <div style={{ backgroundColor: 'rgba(200,0,0,.4)', padding: '10px' }}>{this.state.error}</div>
+                : ""}
+
             {Object.entries(this.props.item).map(itemField => <div key={itemField[0]}>
 
                 {
@@ -131,56 +130,81 @@ class FormHandler extends React.Component {
                 }
 
                 {
-                    //Shows the appropriate selections for connection relationships
-                    itemField[0] === 'connection_relationship' ?
-                        <ConnectionRelationshipSelect field={itemField} callback={this.handleSelectIntChange} item={this.props.item} /> : ""
-                }
-
-                {
                     //Displays the fields for an image
                     itemField[0] === 'image_url' ?
                         <ImageField field={itemField} callback={this.handleFileChange} item={this.props.item} /> : ""
                 }
 
+
                 {
-                    //The extra info section for symbols
-                    itemField[0] === 'extra_info' ?
-                        <ExtraInfoField field={itemField} callback={this.handleInfoChange} item={this.props.item} /> : ""
+                    //Verification for a phone number
+                    itemField[0] === 'phone' ?
+                        <VerifyPhone field={itemField} callback={this.handleChange} item={this.props.item} /> : ""
                 }
 
                 {
-                    //The settings for kinds where you set the extra info fields themselves
-                    itemField[0] === 'default_extra_info' ?
-                        <ExtraInfoDefaultField item={this.props.item} fieldsObject={itemField[1]} handleExtraInfoChange={this.handleExtraInfoChange} /> : ""
+                    itemField[0] === 'school_year' ?
+                        <div>
+                            <Form.Group>
+                                <Form.Label>
+                                    School Year
+                                </Form.Label>
+
+                                <div>
+                                    <Form.Control style={{ backgroundColor: this.state.backgroundColor }} as="select" value={itemField[1]} onChange={this.handleYearChange}>
+                                        {
+                                            ['09 Freshman', '10 Sophomore', '11 Junior', '12 Senior'].map(option =>
+                                                <option key={option} value={`${option}`} >
+                                                    {option}
+                                                </option>)
+                                        }
+                                    </Form.Control>
+                                </div>
+
+
+
+                            </Form.Group>
+                        </div> : ""
                 }
 
-                { /* ADD hidden fields here */ }
+                {
+                    itemField[0] === 'time_options' && this.props.item.visit_status === 'pending' ?
+                        <div>
+                            <ArrayField type='datetime-local' datearray={true} item={this.props.item} field={itemField[0]} array={itemField[1]} handleArrayChange={this.handleDateArrayChange} />
+                        </div> : ""
+                }
+
+                {
+                    itemField[0] === 'application_process' ?
+                        <div><h4>Application Process:</h4> <br />
+                            {
+                                Object.entries(itemField[1])
+                                    .map(step => <div>
+                                        <BasicBooleanField value={step[1]} field={step} callback={this.handleAppProcessCheck} item={this.props.item} />
+
+                                    </div>
+                                    )
+
+                            }
+
+                        </div>
+                        : ""
+                }
+
+                { /* ADD hidden fields here */}
                 {itemField[0] === 'foreign_id' ? <Input type="hidden" name="foreign_id" value={this.props.item.foreign_id} /> : ""}
                 {itemField[0] === 'foreign_key' ? <Input type="hidden" name="foreign_key" value={this.props.item.foreign_key} /> : ""}
                 {itemField[0] === 'foreign_class' ? <Input type="hidden" name="foreign_class" value={this.props.item.foreign_class} /> : ""}
-                
-                { /* Add any notes for any fields here */ }
-                {itemField[0] === 'start_year' ? "Values greater than 0 are treated as AD, and negative values are treated as BCE." : ""}
-                {itemField[0] === 'end_year' ? "Values greater than 0 are treated as AD, and negative values are treated as BCE. Enter '2100' exactly if the pantheon is still living." : ""}
 
             </div>)}
 
-            { /* These are fields that are targeted by classForm */ }
-            {
-                //This is a custom field for a symbol connections, which, if set, tells the backend to create an inverse "duplicate"
-                <DualConnectionField stateSettings={this.state} callback={this.toggleDuplicate} />
-            }
-            { 
-                //BULK ADD is an admin feature that does not refresh the page/form on submit, allowing for much faster entry, reusing of form data
-                this.props.existing ? "" : 
-                    <div>BULK ADD 
-                        <input onChange={this.toggleBulkAdd} type="checkbox" checked={this.state.bulkAdd} />  
-                        <p>BULK ADD is an admin feature that does not refresh the page/form on submit, allowing for much faster entry when entering in multiple articles, but YOU MUST MANUALLY REFRESH PAGE TO SEE CHANGES</p>  
-                    </div> 
-            }
 
-            <button type='submit'>{this.props.existing ? `Edit` : "Add"}</button>
-            <button onClick={this.props.deleteItem}>Delete</button>
+            <button type='submit'>{this.props.existing ? 
+            (this.props.editButtonText ? this.props.editButtonText : `Confirm`) : "Add"}
+
+            </button>
+            { this.props.existing && !this.props.hideDeleteButton ? 
+            <button onClick={this.props.deleteItem}>Delete</button> : "" }
 
         </Form>
     }
@@ -222,6 +246,14 @@ class FormHandler extends React.Component {
         })
     }
 
+    handleDateArrayChange = (field, array) => {
+        array = array.map(a => a ? new Date(a).toUTCString() : null )
+        this.props.updateItem({
+            ...this.props.item,
+            [field]: array
+        })
+    }
+
     handleInfoChange = (e) => {
         this.props.updateItem({
             ...this.props.item,
@@ -256,12 +288,26 @@ class FormHandler extends React.Component {
         })
     }
 
+    handleAppProcessCheck = (e) => {
+        this.props.updateItem({
+            ...this.props.item,
+            application_process: {
+                ...this.props.item.application_process,
+                [e.target.name]: e.target.checked
+            }
+        })
+    }
+
+    handleYearChange = (e) => {
+        this.props.updateItem({...this.props.item, school_year: e.target.value})
+    }
+
     toggleDuplicate = (e) => {
         this.setState({ duplicateConnection: !this.state.duplicateConnection })
     }
-    
+
     toggleBulkAdd = (e) => {
-        this.setState({bulkAdd: !this.state.bulkAdd})
+        this.setState({ bulkAdd: !this.state.bulkAdd })
     }
 
 
@@ -285,146 +331,3 @@ export default withRouter(FormHandler)
 
 
 
-
-
-// handleChange = (e) => {
-//     this.setState({
-//         item: {
-//             ...this.state.item,
-//             [e.target.name]: e.target.value
-//         }
-//     })
-// }
-
-// handleCheck = (e) => {
-//     this.setState({
-//         item: {
-//             ...this.state.item,
-//             [e.target.name]: e.target.checked
-//         }
-//     })
-// }
-
-// handleChangeCb = (field, value) => {
-//     this.setState({
-//         item: {
-//             ...this.state.item,
-//             [field]: value
-//         }
-//     })
-// }
-
-// handleArrayChange = (field, array) => {
-//   this.setState({
-//         item: {
-//             ...this.state.item,
-//             [field]: array
-//         }
-//     })
-// }
-
-// handleInfoChange = (e) => {
-//     this.setState({
-//         item: {
-//             ...this.state.item,
-//             extra_info: {
-//                 ...this.state.item.extra_info,
-//                 [e.target.name]: e.target.value
-//             }
-//         }
-//     })
-// }
-
-// handleExtraInfoChange = (fieldsObject) => {
-//   this.setState({
-//       item: {
-//           ...this.state.item,
-//           default_extra_info: fieldsObject
-//       }
-//   })
-// }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-{/*
-<Form onSubmit={this.submitForm} className="handlerForm" style={{margin:'auto',backgroundColor:this.state.formColor}}>
-      <h2 className="formHeader">{ this.state.existing ? `Edit` : "Add"}</h2>
-      { Object.entries(this.state.item).map(itemField => <div key={itemField[0]} className="formField">
-
-      {
-                  //Basic text fields that don't wrap
-                  formHelpers.checkBasicText(itemField) ?
-                  <BasicTextField field={itemField} callback={this.handleChange} item={this.state.item} /> : ""
-                }
-
-                {
-                  //Text areas with large boxes to write articles
-                  formHelpers.checkTextField(itemField) ?
-                  <TextAreaField field={itemField} callback={this.handleChange} item={this.state.item} /> : ""
-                }
-
-                {
-                  //The forms that create a select field
-                  formHelpers.checkIdSelectField(itemField)  ?
-                  <IdSelectField item={this.state.item} field={itemField[0]} value={itemField[1]} handleChange={this.handleChangeCb}/> : ""
-                }
-
-                {
-                  //Special array handling UI
-                  formHelpers.checkArrayOptionsField(itemField) ?
-                  <ArrayField item={this.state.item} field={itemField[0]} array={itemField[1]} handleArrayChange={this.handleArrayChange}/> : ""
-                 }
-
-                {
-                  //For numbers
-                  formHelpers.checkBasicNumber(itemField)  ?
-                  <BasicNumberField field={itemField} callback={this.handleChange} item={this.state.item} /> : ""
-                }
-
-                {
-                  //Booleans create a checkbox
-                  typeof itemField[1] === 'boolean' && itemField[0] != 'duplicateConnection' ?
-                  <BasicBooleanField field={itemField} callback={this.handleCheck} item={this.state.item} />: ""
-                }
-
-
-                {itemField[0] === 'start_year' ? "Values greater than 0 are treated as AD, and negative values are treated as BCE." : ""}
-                {itemField[0] === 'end_year' ? "Values greater than 0 are treated as AD, and negative values are treated as BCE. Enter '2100' exactly if the pantheon is still living." : ""}
-
-                {
-                  //The extra info section for symbols
-                  itemField[0] === 'extra_info' ?
-                  <ExtraInfoField field={itemField} callback={this.handleInfoChange} item={this.state.item} /> : ""
-                }
-
-                {
-                  //The settings for kinds where you set the extra info fields themselves
-                  itemField[0] === 'default_extra_info' ?
-                  <ExtraInfoDefaultField item={this.state.item} fieldsObject={itemField[1]} handleExtraInfoChange={this.handleExtraInfoChange} /> : ""
-                }
-
-
-
-      </div>) }
-
-
-    <button type='submit'>Save</button>
-    <button onClick={this.deleteItem}>Delete</button>
-
-            </Form> */}

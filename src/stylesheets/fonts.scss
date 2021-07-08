@@ -1,6 +1,6 @@
-$textFont: 'Titillium Web', serif;
-$topFont: 'Wallpoet', cursive;
-$headerFont: 'Bebas Neue', sans-serif;
+$textFont: 'Helvetica', serif;
+$topFont: 'Black Ops One', cursive;
+$headerFont: 'Oxygen', sans-serif;
 
 p,
 a,
@@ -13,6 +13,7 @@ a,
 @mixin h-tag($color: $headerFontColor, $font: $headerFont) {
 	font-family: $font;
 	color: $color;
+	margin: 5px 0;
 }
 
 h1 {
@@ -40,11 +41,11 @@ h3 {
 	font-size: 24px;
 }
 h4 {
-	@include h-tag;
+	@include h-tag($font: $textFont);
 	font-size: 20px;
 }
 h5 {
-	@include h-tag;
-	font-size: 18px;
-	text-decoration: underline;
+	@include h-tag($font: $textFont);
+	font-size: 16px;
+	font-weight:bold;
 }

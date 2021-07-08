@@ -39,25 +39,18 @@ class Header extends React.Component {
 
     const user = localStorage.user ? JSON.parse(localStorage.user) : null
 
-    return <div className={`header ${this.state.showDropdown ? 'headerFill' : ""}`}>
+    return <div style={{textAlign:'center'}}><div className={`header ${this.state.showMenu ? "show-menu" : "hide-menu"} `} >
 
-      <Container>
-        <Row>
-          <Col xs={12} lg={3} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-            <NavLink to="/" style={{background:'none'}}><img alt="logo" height="50px" src={logoURL} />
-            {siteTitle}
+            <br /><h1 className='fas fa-window-close hmenu-mobile-toggle d-lg-none' onClick={this.toggleMenu}></h1><br />
+            <NavLink to="/" style={{background:'none'}}><img alt="logo" height="50px" src={logoURL} /><br />
+            <h3 style={{color:"white"}}></h3>
             </NavLink>
-            <span className='fas fa-bars hmenu-mobile-toggle d-inline d-lg-none' onClick={this.toggleMenu}></span>
-          </Col>
-
-          <Col xs={12} lg={9} className='menu-right' >
+         
             <Menu auth={this.props.auth} showMenu={this.state.showMenu} toggleDropdown={this.toggleDropdown} />
-          </Col>
-        </Row>
-
-      </Container>
+       
 
     </div>
+    <br /><h2 className='fas fa-bars hmenu-mobile-toggle d-inline d-lg-none' onClick={this.toggleMenu}></h2></div>
   }
 
 }

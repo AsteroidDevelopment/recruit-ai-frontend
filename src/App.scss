@@ -33,30 +33,30 @@
 }
 
 .App {
-	text-align: center;
+	text-align: left;
 }
 
+ul { list-style:none;padding:0;}
+
+.form-group {margin-bottom:25px !important;text-align:left;}
+
 .main-bg {
-	background-color: $dark-color;
+	background-color: $backgroundOpacityColor;;
 	$weights: "https://images.pexels.com/photos/703016/pexels-photo-703016.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940";
-	background-image: url($weights);
 	background-size: cover;
 	background-attachment: fixed;
 	background-position:center;
 }
-.main-screen {
-	background: linear-gradient(
-		rgba($backgroundOpacityColor, .9) 10%,
-		rgba($backgroundOpacityColor, .85) 20%,
-		rgba($backgroundOpacityColor, .75) 40%,
-		rgba($backgroundOpacityColor, .65) 70%,
-		rgba($backgroundOpacityColor, .9) 100%
-	);
+.main-screen {}
+
+.staff-square {
+	background-color:$ll-light-color;
+	border:1px solid black;
+	border-radius:4px;
+	padding:10px;
 }
 
-
 .main-page {
-	background-color: rgba($secondary-color, .7);
 }
 
 .page-field {
@@ -258,4 +258,77 @@
 		padding:20px;
 		padding-top:0;
 	}
+}
+
+.message {
+	padding:20px;
+	width:100%;
+	margin: 10px 0;
+	.message-date {
+		color: $l-grey-color;
+	}
+}
+
+#messages-scroll-box {
+	background-color:grey;
+	max-height:50vh;
+	overflow:scroll;
+	&>div {
+	display:flex;
+	flex-direction: row-reverse;
+	flex-wrap: wrap-reverse;
+	}
+}
+
+
+
+
+.alternateRows > *:nth-child(odd) {
+	background-color:#F4F4F4;
+}
+
+.itemFlex > * {
+	display:flex;
+	justify-content: space-between;
+}
+.itemList {
+	background-color: white;
+	border-radius:13px;
+	border: 1px solid #AFA3A3;
+}
+
+.itemPanel {
+	padding:10px;
+}
+
+.itemListHeader {
+	font-weight: bold;
+	padding:10px 0;
+}
+
+.hide-panel {
+	position:absolute;
+	width:480px;
+	margin-left:-240px;
+	background-color: white;
+	border-radius:13px;
+	border: 1px solid #AFA3A3;
+	padding:10px;
+	z-index:100;
+
+	select {
+		display:block;
+		width:100%;
+		border-radius: 4px;
+		padding:4px 0;
+		margin:4px 0;
+	}
+}
+
+.neatform {
+	display:block;
+	width:100%;
+	border-radius: 4px;
+	padding:4px 0;
+	margin:4px 0;
 }

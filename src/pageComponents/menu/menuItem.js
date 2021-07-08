@@ -21,7 +21,9 @@ class MenuItem extends React.Component {
         case 'logged_in':
             return user
         case 'admin':
-            return user.user_role >= 3
+            return user && user.user_role >= 3
+        case 'end_user':
+            return user && user.user_kind === 'end_user'
     }
   }
 

@@ -15,6 +15,7 @@ export const resetPasswordPath = (username, hash) => { return authPath(`/resetPa
 export default {
     apiPath, 
     userPath, 
+    authPath,
     registerPath,
     verifyUserPath,
     loginPath,

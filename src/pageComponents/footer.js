@@ -8,9 +8,6 @@ function Footer() {
         <div>
          ~ <NavLink to="/">Home</NavLink> ~
         <NavLink to="/pages/features">Features</NavLink> ~
-        <NavLink to="/pages/questions">FAQ</NavLink> ~
-        <NavLink to="/pages/magick-statement">Rules & Guidelines</NavLink> ~
-        <NavLink to="/pages/shop">Shop</NavLink> ~
         <NavLink to="/feedback/provide">Contact/Report</NavLink> ~
         </div>
 

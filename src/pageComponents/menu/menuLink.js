@@ -16,7 +16,7 @@ const MenuLink = (props) => {
     const item = props.item
     return <NavLink className="hmenu-item" to={displayLink(item)}> 
 
-    <span>{item.name}</span> <span className={`fas fa-${item.symbol}`}></span>
+    <span className={`fas fa-${item.symbol}`}></span> <span>{item.name}</span> 
     
     </NavLink>
 }

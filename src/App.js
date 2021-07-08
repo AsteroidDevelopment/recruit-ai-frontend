@@ -33,13 +33,14 @@ class App extends React.Component {
 	render() {
 		return (
 			<div className="App main-bg">
+				<Header auth={{ curr_user: this.state, logout: this.logout, login: this.login }} />
+
 				<div className="main-screen">
 					<Helmet>
                 		<title>{`RecruitAI- For Coaches & Recruiters- Track & Message Athletes`}</title>
         			</Helmet>
-					<Header auth={{ curr_user: this.state, logout: this.logout, login: this.login }} />
 					<Body auth={{ curr_user: this.state, logout: this.logout, login: this.login }} />
-					<Footer />
+					
 				</div>
 			</div>
 		);

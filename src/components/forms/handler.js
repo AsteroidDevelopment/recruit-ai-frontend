@@ -2,6 +2,7 @@ import React from 'react'
 import axios from 'axios'
 import BuildForm from './buildForm'
 import { withRouter } from "react-router-dom";
+import api from '../../helpers/api'
 
 
 const curr_user = localStorage.user ?  JSON.parse(localStorage.user) : false
@@ -14,28 +15,17 @@ class FormHandler extends React.Component {
       item: {},
       formClass: "",
       existing: (props.existing === true || props.existing === false) ? props.existing : (props.match.params.id ? true : false),
-      editId: props.editId || props.match.params.id,
-      default_extra_info: {}
+      editId: props.editId || props.match.params.id
     }
   }
 
+  
   componentDidMount = () => { this.updateInfo(); }
   componentWillReceiveProps = (newProps) => {this.updateInfo(newProps);}
 
   updateInfo = (props = this.props) => {
     this.setState({item: props.item, formClass: props.formClass})
-    if(props.item.extra_info) {
-      axios
-          .get(`https://grimwire.herokuapp.com/api/kinds/${props.item.symbol_kind_id}`)
-          .then(res => {
-            if(res.data.kind_id){
-              this.setState({default_extra_info: res.data.default_extra_info})
-            }
-          })
-          .catch(err => console.log(err) )
-    }
   }
-
   
   //UPDATE ITEM is a wrapper function passed as a callback to update this state
   updateItem = (item) => { this.setState({item}) }
@@ -46,28 +36,40 @@ class FormHandler extends React.Component {
       var apiCall;
   
       if(method === 'put') {
-        apiCall = await axios.put(url, payload, headers)
+        await axios.put(url, payload, headers)
+        .then((res) => apiCall = res)
+        .catch((err) => apiCall = err)
       } else {
-        apiCall = await axios.post(url, payload, headers)
+        await axios.post(url, payload, headers)
+        .then((res) => apiCall = res)
+        .catch((err) => apiCall = err)
       }
-      if(!bulkAdd) { await this.props.update() }
+      if(this.props.blockRedirect) { await this.props.update(apiCall) }
+      else if(!bulkAdd) { await this.props.update() }
       return apiCall
+
     }
   
 
   submitForm = async (bulkAdd = false) => {
     let item = this.state.item
     
-    const postURL = `https://grimwire.herokuapp.com/api/${this.state.formClass}`
+    const postURL = api.apiPath(`/${this.state.formClass ==="support_tickets" ? 'support-tickets' : this.state.formClass}`)
     const putURL = `${postURL}/${this.state.editId}`
 
     var apiCall, redirect;
 
+    if(this.props.apiRoute){
+      var overwritePath = api.apiPath(this.props.apiRoute)
+    }
+
+
     if(this.state.existing) {
-      apiCall = await this.updateAPI('put', putURL, item, bulkAdd)
+      apiCall = await this.updateAPI('put', overwritePath || putURL, item, bulkAdd)
       redirect = null
     } else {
-      apiCall = await this.updateAPI('post', postURL, item, bulkAdd)
+      apiCall = await this.updateAPI('post', overwritePath || postURL, item, bulkAdd)
+      
       redirect = this.redirectEditPath(apiCall)
     }
 
@@ -79,9 +81,9 @@ class FormHandler extends React.Component {
     const headers = { headers: {'authorization': localStorage.token} }
     if(window.confirm("Are you sure you wish to completely delete the item?")){
       axios
-          .delete(`https://grimwire.herokuapp.com/api/${this.state.formClass}/${this.props.match.params.id}`, headers)
+          .delete(api.apiPath(`/${this.state.formClass}/${this.props.match.params.id}`), headers)
           .then(res =>
-            this.props.history.push(`/${ this.state.formClass === 'kinds' ? "collections" : this.state.formClass}`)
+            this.props.history.push(`/${this.state.formClass}`)
           )
           .catch(err => console.log(err) )
     }
@@ -89,10 +91,11 @@ class FormHandler extends React.Component {
 
 
   render() {
-    const show = curr_user
+    const show = curr_user || this.props.public
     return show ?
       <div className='full-form'>
         <BuildForm 
+          {...this.props}
           item={this.state.item} 
           updateItem={this.updateItem} 
           submitForm={this.submitForm} 
@@ -104,28 +107,14 @@ class FormHandler extends React.Component {
   }
 
   redirectEditPath = (res) => {
-    let redirectId = 0;
-
-    switch(this.state.formClass){
-      case('kinds'):
-        redirectId = res.data.kind_id
-        break;
-      case('pantheons'):
-        redirectId = res.data.pantheon_id
-        break;
-      case('symbols'):
-        redirectId = res.data.symbol_id
-        break;
-      case('categories'):
-        redirectId = res.data.category_id
-        break;
-       case('resources'):
-        redirectId = res.data.resource_id
-        break;
-      }
-
-      const redirectPath = this.state.formClass === 'kinds' ? "collections" : this.state.formClass
-      return `/${redirectPath}/${redirectId}/edit`
+    if(this.props.blockRedirect) {
+      return false
+    }if(this.props.redirect) {
+      return this.props.redirect
+    } else {
+      let redirectId = res.data[this.props.redirectIdField]
+      return `/${this.state.formClass}/${redirectId}/edit`
+    }
 
   }
 

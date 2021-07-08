@@ -59,7 +59,7 @@ class FeedbackIndex extends React.Component {
           <h2>Give Some Feedback</h2>
           <Form onSubmit={this.submitForm} className="handlerForm" style={{margin:'auto',backgroundColor:this.state.formColor}}>
             <Form.Group>
-              <Form.Label>Kind of Feedback:</Form.Label>
+              <Form.Label>Feedback:</Form.Label>
               <Form.Control as="select" onChange={this.handleSelectChange} type="text"
                 name={ "feedback_kind" }
                 value={this.state.feedback[ "feedback_kind" ]} >

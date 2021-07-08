@@ -1,6 +1,7 @@
 import React from 'react'
 import {Form} from 'react-bootstrap'
 import axios from 'axios'
+import {Link} from 'react-router-dom'
 import api from '../../helpers/api'
 
 
@@ -13,6 +14,8 @@ class LogIn extends React.Component {
             password: "",
             confirmPassword: "",
             user_email: "",
+            user_role: 1,
+            user_kind: "end_user",
             mailing_list: true
           },
           sent: false,
@@ -82,19 +85,16 @@ class LogIn extends React.Component {
 
 
     render() {
-        return <div className="tpBlackBg">
-            {this.state.sent ? "Thank you. Please go check your email for the verification link. If you do not see it within a few minutes, please check your spam folder." :
+        return <div className="tpBlackBg" style={{border: "1px outset grey", borderRadius: '2px', maxWidth:'800px',margin:'40px auto', backgroundColor: '#fff', padding: '40px'}}>
+            {this.state.sent ? <div>
+              <h1>Thank you.</h1> 
+              <h3>Please go check your email for the verification link.</h3>
+              <p>If you do not see it within a few minutes, please check your spam folder</p>
+            </div>:
             <Form onSubmit={this.handleLogin} style={{maxWidth:"800px", width:"100%", margin:"auto", backgroundColor:this.state.formColor}}>
             
             <h2>Create an Account</h2>
-            <hr />
-            <h4>Creating an account allows you to:</h4>
-            <p>Sign up for notifications on the official & new releases</p>
-            <p>Edit & create articles & information</p>
-            <h4>Coming Soon</h4>
-            <p>Take private notes on each article</p>
-            <p>Create spells & decide public or private individually</p>
-            
+            Already have an account? Click <Link to='/users/login'>here</Link> to login.
             <hr />
 
             { this.state.error ? 
@@ -135,6 +135,8 @@ class LogIn extends React.Component {
                       value={this.state.user.confirmPassword} />
                     <Form.Text>Required</Form.Text>
                 </Form.Group>
+
+              
                 <Form.Group>
                     <Form.Label>Recieve email updates?</Form.Label>
                     <Form.Control
